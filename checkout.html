@@ -1,0 +1,936 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Payment - Community Driven Delivery</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+        
+        :root {
+            --primary: #FF5722;
+            --secondary: #FFA726;
+            --dark: #333;
+            --light: #f9f9f9;
+            --accent: #4CAF50;
+            --danger: #f44336;
+            --success: #4CAF50;
+            --gray: #757575;
+            --light-gray: #e0e0e0;
+        }
+        
+        body {
+            background-color: var(--light);
+            color: var(--dark);
+        }
+        
+        header {
+            background-color: white;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+        
+        .header-container {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 15px 20px;
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+        
+        .logo {
+            font-size: 1.5rem;
+            font-weight: bold;
+            color: var(--primary);
+        }
+        
+        .logo span {
+            color: var(--accent);
+        }
+        
+        nav ul {
+            display: flex;
+            list-style: none;
+            gap: 25px;
+        }
+        
+        nav a {
+            text-decoration: none;
+            color: var(--dark);
+            font-weight: 500;
+            transition: color 0.3s;
+        }
+        
+        nav a:hover {
+            color: var(--primary);
+        }
+        
+        .nav-icons {
+            display: flex;
+            gap: 20px;
+        }
+        
+        .nav-icon {
+            color: var(--dark);
+            font-size: 1.2rem;
+            cursor: pointer;
+            text-decoration: none;
+        }
+        
+        .main-container {
+            max-width: 1200px;
+            margin: 30px auto;
+            padding: 0 20px;
+        }
+        
+        .page-title {
+            margin-bottom: 30px;
+            position: relative;
+            display: inline-block;
+            padding-bottom: 10px;
+        }
+        
+        .page-title:after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            width: 70px;
+            height: 3px;
+            background-color: var(--primary);
+        }
+        
+        .payment-container {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 30px;
+        }
+        
+        .payment-details {
+            flex: 2;
+            min-width: 300px;
+        }
+        
+        .order-summary {
+            flex: 1;
+            min-width: 300px;
+        }
+        
+        .card {
+            background: white;
+            border-radius: 10px;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.05);
+            padding: 25px;
+            margin-bottom: 30px;
+        }
+        
+        .card-title {
+            font-size: 1.3rem;
+            margin-bottom: 20px;
+            padding-bottom: 10px;
+            border-bottom: 1px solid var(--light-gray);
+        }
+        
+        .delivery-address {
+            margin-bottom: 20px;
+        }
+        
+        .address-card {
+            border: 1px solid var(--light-gray);
+            border-radius: 8px;
+            padding: 15px;
+            margin-bottom: 15px;
+            position: relative;
+        }
+        
+        .selected-address {
+            border: 2px solid var(--accent);
+        }
+        
+        .address-type {
+            position: absolute;
+            top: 15px;
+            right: 15px;
+            background-color: var(--light-gray);
+            padding: 3px 10px;
+            border-radius: 20px;
+            font-size: 0.8rem;
+        }
+        
+        .address-name {
+            font-weight: bold;
+            margin-bottom: 5px;
+        }
+        
+        .address-details {
+            color: var(--gray);
+            margin-bottom: 5px;
+        }
+        
+        .address-phone {
+            color: var(--gray);
+        }
+        
+        .add-address-btn {
+            background-color: transparent;
+            border: 2px dashed var(--light-gray);
+            border-radius: 8px;
+            padding: 15px;
+            width: 100%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            font-weight: bold;
+            color: var(--gray);
+            transition: all 0.3s;
+        }
+        
+        .add-address-btn:hover {
+            border-color: var(--primary);
+            color: var(--primary);
+        }
+        
+        .payment-methods {
+            margin-bottom: 20px;
+        }
+        
+        .payment-method-option {
+            border: 1px solid var(--light-gray);
+            border-radius: 8px;
+            padding: 15px;
+            margin-bottom: 15px;
+            cursor: pointer;
+            transition: all 0.3s;
+            display: flex;
+            align-items: center;
+        }
+        
+        .payment-method-option:hover {
+            border-color: var(--primary);
+        }
+        
+        .selected-payment {
+            border: 2px solid var(--accent);
+        }
+        
+        .payment-radio {
+            margin-right: 15px;
+            width: 20px;
+            height: 20px;
+            accent-color: var(--accent);
+        }
+        
+        .payment-icon {
+            margin-right: 15px;
+            font-size: 1.5rem;
+            width: 24px;
+            display: flex;
+            justify-content: center;
+        }
+        
+        .payment-label {
+            flex: 1;
+        }
+        
+        .card-details {
+            margin-top: 20px;
+            padding-top: 20px;
+            border-top: 1px solid var(--light-gray);
+        }
+        
+        .form-group {
+            margin-bottom: 20px;
+        }
+        
+        .form-label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 500;
+        }
+        
+        .form-input {
+            width: 100%;
+            padding: 12px 15px;
+            border: 1px solid var(--light-gray);
+            border-radius: 5px;
+            font-size: 1rem;
+            transition: border-color 0.3s;
+        }
+        
+        .form-input:focus {
+            border-color: var(--primary);
+            outline: none;
+        }
+        
+        .input-group {
+            display: flex;
+            gap: 15px;
+        }
+        
+        .input-group .form-group {
+            flex: 1;
+        }
+        
+        .save-card {
+            display: flex;
+            align-items: center;
+            margin-top: 15px;
+        }
+        
+        .save-card input {
+            margin-right: 10px;
+            width: 18px;
+            height: 18px;
+            accent-color: var(--accent);
+        }
+        
+        .upi-details, .netbanking-details, .wallet-details {
+            margin-top: 20px;
+            padding-top: 20px;
+            border-top: 1px solid var(--light-gray);
+            display: none;
+        }
+        
+        .upi-input-group {
+            display: flex;
+            gap: 10px;
+        }
+        
+        .upi-input-group .form-input {
+            flex: 1;
+        }
+        
+        .verify-btn {
+            padding: 12px 20px;
+            background-color: var(--accent);
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-weight: bold;
+            transition: background-color 0.3s;
+        }
+        
+        .verify-btn:hover {
+            background-color: #3d8b40;
+        }
+        
+        .bank-options {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(120px, 1fr));
+            gap: 15px;
+            margin-top: 15px;
+        }
+        
+        .bank-option {
+            border: 1px solid var(--light-gray);
+            border-radius: 8px;
+            padding: 15px;
+            cursor: pointer;
+            text-align: center;
+            transition: all 0.3s;
+        }
+        
+        .bank-option:hover {
+            border-color: var(--primary);
+        }
+        
+        .bank-option img {
+            width: 50px;
+            height: 50px;
+            margin-bottom: 10px;
+        }
+        
+        .bank-name {
+            font-size: 0.9rem;
+        }
+        
+        .wallet-options {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(120px, 1fr));
+            gap: 15px;
+            margin-top: 15px;
+        }
+        
+        .wallet-option {
+            border: 1px solid var(--light-gray);
+            border-radius: 8px;
+            padding: 15px;
+            cursor: pointer;
+            text-align: center;
+            transition: all 0.3s;
+        }
+        
+        .wallet-option:hover {
+            border-color: var(--primary);
+        }
+        
+        .wallet-option img {
+            width: 50px;
+            height: 50px;
+            margin-bottom: 10px;
+        }
+        
+        .wallet-name {
+            font-size: 0.9rem;
+        }
+        
+        .order-items {
+            margin-bottom: 20px;
+        }
+        
+        .order-item {
+            display: flex;
+            gap: 15px;
+            padding-bottom: 15px;
+            margin-bottom: 15px;
+            border-bottom: 1px solid var(--light-gray);
+        }
+        
+        .item-image {
+            width: 70px;
+            height: 70px;
+            border-radius: 8px;
+            background-color: var(--light-gray);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            overflow: hidden;
+        }
+        
+        .item-image img {
+            max-width: 100%;
+            max-height: 100%;
+        }
+        
+        .item-details {
+            flex: 1;
+        }
+        
+        .item-name {
+            font-weight: 500;
+            margin-bottom: 5px;
+        }
+        
+        .item-price {
+            color: var(--gray);
+            font-size: 0.9rem;
+            margin-bottom: 5px;
+        }
+        
+        .item-quantity {
+            color: var(--gray);
+            font-size: 0.9rem;
+        }
+        
+        .price-details {
+            margin-bottom: 20px;
+        }
+        
+        .price-row {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 10px;
+        }
+        
+        .price-label {
+            color: var(--gray);
+        }
+        
+        .price-value {
+            font-weight: 500;
+        }
+        
+        .discount {
+            color: var(--success);
+        }
+        
+        .total-row {
+            display: flex;
+            justify-content: space-between;
+            padding-top: 15px;
+            margin-top: 15px;
+            border-top: 1px solid var(--light-gray);
+        }
+        
+        .total-label {
+            font-weight: bold;
+            font-size: 1.1rem;
+        }
+        
+        .total-value {
+            font-weight: bold;
+            font-size: 1.1rem;
+            color: var(--primary);
+        }
+        
+        .coupon-input {
+            display: flex;
+            margin-bottom: 20px;
+        }
+        
+        .coupon-input input {
+            flex: 1;
+            padding: 12px 15px;
+            border: 1px solid var(--light-gray);
+            border-radius: 5px 0 0 5px;
+            font-size: 1rem;
+        }
+        
+        .coupon-input input:focus {
+            border-color: var(--primary);
+            outline: none;
+        }
+        
+        .apply-btn {
+            padding: 12px 20px;
+            background-color: var(--primary);
+            color: white;
+            border: none;
+            border-radius: 0 5px 5px 0;
+            cursor: pointer;
+            font-weight: bold;
+            transition: background-color 0.3s;
+        }
+        
+        .apply-btn:hover {
+            background-color: #e64a19;
+        }
+        
+        .payment-btn {
+            width: 100%;
+            padding: 15px;
+            background-color: var(--accent);
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-weight: bold;
+            font-size: 1rem;
+            transition: background-color 0.3s;
+            margin-top: 15px;
+        }
+        
+        .payment-btn:hover {
+            background-color: #3d8b40;
+        }
+        
+        .order-info {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 15px;
+            background-color: rgba(76, 175, 80, 0.1);
+            border-radius: 8px;
+            color: var(--accent);
+            margin-bottom: 20px;
+        }
+        
+        .order-info-icon {
+            margin-right: 10px;
+        }
+        
+        footer {
+            background-color: var(--dark);
+            color: white;
+            padding: 50px 20px 20px;
+            margin-top: 50px;
+        }
+        
+        .footer-container {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+        
+        .footer-content {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 30px;
+            margin-bottom: 40px;
+        }
+        
+        .footer-column h3 {
+            font-size: 1.2rem;
+            margin-bottom: 20px;
+            position: relative;
+            padding-bottom: 10px;
+        }
+        
+        .footer-column h3:after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            width: 40px;
+            height: 2px;
+            background-color: var(--primary);
+        }
+        
+        .footer-links {
+            list-style: none;
+        }
+        
+        .footer-links li {
+            margin-bottom: 10px;
+        }
+        
+        .footer-links a {
+            text-decoration: none;
+            color: #bbb;
+            transition: color 0.3s;
+        }
+        
+        .footer-links a:hover {
+            color: white;
+        }
+        
+        .social-links {
+            display: flex;
+            gap: 15px;
+        }
+        
+        .social-links a {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            width: 40px;
+            height: 40px;
+            background-color: #444;
+            color: white;
+            border-radius: 50%;
+            transition: background-color 0.3s;
+            text-decoration: none;
+        }
+        
+        .social-links a:hover {
+            background-color: var(--primary);
+        }
+        
+        .footer-bottom {
+            border-top: 1px solid #444;
+            padding-top: 20px;
+            text-align: center;
+            color: #bbb;
+            font-size: 0.9rem;
+        }
+        
+        /* Responsive adjustments */
+        @media (max-width: 768px) {
+            nav ul {
+                display: none;
+            }
+            
+            .header-container {
+                justify-content: space-between;
+            }
+            
+            .input-group {
+                flex-direction: column;
+                gap: 0;
+            }
+            
+            .bank-options, .wallet-options {
+                grid-template-columns: repeat(2, 1fr);
+            }
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <div class="header-container">
+            <div class="logo">Community<span>Delivery</span></div>
+            <nav>
+                <ul>
+                    <li><a href="home.html">Home</a></li>
+                    <li><a href="#">Stores</a></li>
+                    <li><a href="#">About Us</a></li>
+                    <li><a href="#">Contact</a></li>
+                </ul>
+            </nav>
+            <div class="nav-icons">
+                <a href="account.html" class="nav-icon">👤</a>
+                <a href="cart.html" class="nav-icon">🛒</a>
+            </div>
+        </div>
+    </header>
+
+    <div class="main-container">
+        <h1 class="page-title">Checkout</h1>
+        
+        <div class="payment-container">
+            <div class="payment-details">
+                <div class="card">
+                    <h2 class="card-title">Delivery Address</h2>
+                    <div class="delivery-address">
+                        <div class="address-card selected-address">
+                            <div class="address-type">Home</div>
+                            <div class="address-name">Rahul Sharma</div>
+                            <div class="address-details">Flat 202, Tower C, Sunshine Apartments, Sector 12</div>
+                            <div class="address-details">Bengaluru, Karnataka - 560001</div>
+                            <div class="address-phone">+91 9876543210</div>
+                        </div>
+                        <div class="address-card">
+                            <div class="address-type">Work</div>
+                            <div class="address-name">Rahul Sharma</div>
+                            <div class="address-details">Floor 4, Building 3, Tech Park, Whitefield</div>
+                            <div class="address-details">Bengaluru, Karnataka - 560066</div>
+                            <div class="address-phone">+91 9876543210</div>
+                        </div>
+                        <button class="add-address-btn">+ Add New Address</button>
+                    </div>
+                </div>
+                
+                <div class="card">
+                    <h2 class="card-title">Payment Method</h2>
+                    <div class="payment-methods">
+                        <div class="payment-method-option selected-payment" id="creditDebitOption">
+                            <input type="radio" name="payment-method" id="creditDebit" class="payment-radio" checked>
+                            <div class="payment-icon">💳</div>
+                            <label for="creditDebit" class="payment-label">Credit / Debit Card</label>
+                        </div>
+                        
+                        <div class="payment-method-option" id="upiOption">
+                            <input type="radio" name="payment-method" id="upi" class="payment-radio">
+                            <div class="payment-icon">📱</div>
+                            <label for="upi" class="payment-label">UPI</label>
+                        </div>
+                        
+                        <div class="payment-method-option" id="netbankingOption">
+                            <input type="radio" name="payment-method" id="netbanking" class="payment-radio">
+                            <div class="payment-icon">🏦</div>
+                            <label for="netbanking" class="payment-label">Net Banking</label>
+                        </div>
+                        
+                        <div class="payment-method-option" id="walletOption">
+                            <input type="radio" name="payment-method" id="wallet" class="payment-radio">
+                            <div class="payment-icon">👛</div>
+                            <label for="wallet" class="payment-label">Wallets</label>
+                        </div>
+                        
+                        <div class="payment-method-option" id="codOption">
+                            <input type="radio" name="payment-method" id="cod" class="payment-radio">
+                            <div class="payment-icon">💵</div>
+                            <label for="cod" class="payment-label">Cash on Delivery</label>
+                        </div>
+                    </div>
+                    
+                    <div class="card-details" id="cardDetails">
+                        <div class="form-group">
+                            <label for="cardNumber" class="form-label">Card Number</label>
+                            <input type="text" id="cardNumber" class="form-input" placeholder="1234 5678 9012 3456" maxlength="19">
+                        </div>
+                        
+                        <div class="form-group">
+                            <label for="cardName" class="form-label">Name on Card</label>
+                            <input type="text" id="cardName" class="form-input" placeholder="John Smith">
+                        </div>
+                        
+                        <div class="input-group">
+                            <div class="form-group">
+                                <label for="expiry" class="form-label">Expiry Date</label>
+                                <input type="text" id="expiry" class="form-input" placeholder="MM/YY" maxlength="5">
+                            </div>
+                            
+                            <div class="form-group">
+                                <label for="cvv" class="form-label">CVV</label>
+                                <input type="password" id="cvv" class="form-input" placeholder="123" maxlength="3">
+                            </div>
+                        </div>
+                        
+                        <div class="save-card">
+                            <input type="checkbox" id="saveCard">
+                            <label for="saveCard">Save this card for future payments</label>
+                        </div>
+                    </div>
+                    
+                    <div class="upi-details" id="upiDetails">
+                        <div class="form-group">
+                            <label for="upiId" class="form-label">UPI ID</label>
+                            <div class="upi-input-group">
+                                <input type="text" id="upiId" class="form-input" placeholder="yourname@upi">
+                                <button class="verify-btn">Verify</button>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="netbanking-details" id="netbankingDetails">
+                        <p>Select Your Bank</p>
+                        <div class="bank-options">
+                            <div class="bank-option">
+                                <img src="/api/placeholder/50/50" alt="SBI">
+                                <div class="bank-name">SBI</div>
+                            </div>
+                            <div class="bank-option">
+                                <img src="/api/placeholder/50/50" alt="HDFC">
+                                <div class="bank-name">HDFC</div>
+                            </div>
+                            <div class="bank-option">
+                                <img src="/api/placeholder/50/50" alt="ICICI">
+                                <div class="bank-name">ICICI</div>
+                            </div>
+                            <div class="bank-option">
+                                <img src="/api/placeholder/50/50" alt="Axis">
+                                <div class="bank-name">Axis</div>
+                            </div>
+                            <div class="bank-option">
+                                <img src="/api/placeholder/50/50" alt="Kotak">
+                                <div class="bank-name">Kotak</div>
+                            </div>
+                            <div class="bank-option">
+                                <img src="/api/placeholder/50/50" alt="PNB">
+                                <div class="bank-name">PNB</div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="wallet-details" id="walletDetails">
+                        <p>Select Your Wallet</p>
+                        <div class="wallet-options">
+                            <div class="wallet-option">
+                                <img src="/api/placeholder/50/50" alt="Paytm">
+                                <div class="wallet-name">Paytm</div>
+                            </div>
+                            <div class="wallet-option">
+                                <img src="/api/placeholder/50/50" alt="PhonePe">
+                                <div class="wallet-name">PhonePe</div>
+                            </div>
+                            <div class="wallet-option">
+                                <img src="/api/placeholder/50/50" alt="Amazon Pay">
+                                <div class="wallet-name">Amazon Pay</div>
+                            </div>
+                            <div class="wallet-option">
+                                <img src="/api/placeholder/50/50" alt="MobiKwik">
+                                <div class="wallet-name">MobiKwik</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="order-summary">
+                <div class="card">
+                    <h2 class="card-title">Order Summary</h2>
+                    
+                    <div class="order-info">
+                        <span>
+                            <span class="order-info-icon">🕒</span>
+                            Delivery in 25-30 minutes
+                        </span>
+                    </div>
+                    
+                    <div class="order-items">
+                        <div class="order-item">
+                            <div class="item-image">
+                                <img src="/api/placeholder/70/70" alt="Tata Salt">
+                            </div>
+                            <div class="item-details">
+                                <div class="item-name">Tata Salt</div>
+                                <div class="item-price">₹20</div>
+                                <div class="item-quantity">Qty: 1</div>
+                            </div>
+                        </div>
+                        
+                        <div class="order-item">
+                            <div class="item-image">
+                                <img src="/api/placeholder/70/70" alt="Aashirvaad Atta">
+                            </div>
+                            <div class="item-details">
+                                <div class="item-name">Aashirvaad Atta (5kg)</div>
+                                <div class="item-price">₹250</div>
+                                <div class="item-quantity">Qty: 1</div>
+                            </div>
+                        </div>
+                        
+                        <div class="order-item">
+                            <div class="item-image">
+                                <img src="/api/placeholder/70/70" alt="Amul Butter">
+                            </div>
+                            <div class="item-details">
+                                <div class="item-name">Amul Butter (500g)</div>
+                                <div class="item-price">₹245</div>
+                                <div class="item-quantity">Qty: 1</div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="coupon-input">
+                        <input type="text" placeholder="Enter Coupon Code">
+                        <button class="apply-btn">Apply</button>
+                    </div>
+                    
+                    <div class="price-details">
+                        <div class="price-row">
+                            <div class="price-label">Item Total</div>
+                            <div class="price-value">₹515.00</div>
+                        </div>
+                        
+                        <div class="price-row">
+                            <div class="price-label">Delivery Fee</div>
+                            <div class="price-value">₹30.00</div>
+                        </div>
+                        
+                        <div class="price-row">
+                            <div class="price-label">Taxes and Charges</div>
+                            <div class="price-value">₹25.75</div>
+                        </div>
+                        
+                        <div class="price-row">
+                            <div class="price-label">Discount</div>
+                            <div class="price-value discount">-₹51.50</div>
+                        </div>
+                        
+                        <div class="total-row">
+                            <div class="total-label">To Pay</div>
+                            <div class="total-value">₹519.25</div>
+                        </div>
+                    </div>
+                    
+                    <button class="payment-btn" id="makePaymentBtn">Make Payment</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <footer>
+        <div class="footer-container">
+            <div class="footer-content">
+                <div class="footer-column">
+                    <h3>Community Delivery</h3>
+                    <p>A platform that connects your community for convenient, affordable local deliveries.</p>
+                    <div class="social-links">
+                        <a href="#">F</a>
+                        <a href="#">T</a>
+                        <a href="#">I</a>
+                        <a href="#">L</a>
+                    </div>
+                </div>
+                <div class="footer-column">
+                    <h3>Quick Links</h3>
+                    <ul class="footer-links">
+                        <li><a href="#">About Us</a></li>
+                        <li><a href="#">Services</a></li>
+                        <li><a href="#">Become a Delivery Partner</a></li>
+                        <li><a href="#">Contact Us</a></li>
+                        <li><a href="order-tracking.html">Track Your Order</a></li>
+                    </ul>
+                </div>
+                <div class="footer-column">
+                    <h3>Categories</h3>
+                    <ul class="footer-links">
+                        <li><a href="#">Grocery</a></li>
+                        <li><a href="#">Health & Food</a></li>
+                        <li><a href="#">Beauty</a></li>
+                        <li><a href="#">Medicines</a></li>
+                        <li><a href="#">Restaurants</a></li>
+                    </ul>
+                </div>
+                <div class
