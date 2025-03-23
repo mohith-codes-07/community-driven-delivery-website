@@ -462,5 +462,96 @@
             </div>
         </div>
     </div>
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+    // Get current user from localStorage
+    const currentUser = JSON.parse(localStorage.getItem('currentUser'));
+    
+    // If no user is logged in, redirect to login page
+    if (!currentUser) {
+        window.location.href = 'index.html';
+        return;
+    }
+    
+    // Update profile information in sidebar
+    document.querySelector('.profile-name').textContent = currentUser.fullName || `${currentUser.firstName} ${currentUser.lastName}`.trim();
+    document.querySelector('.profile-section p').textContent = currentUser.email;
+    
+    // Fill in the form fields
+    document.getElementById('first-name').value = currentUser.firstName || '';
+    document.getElementById('last-name').value = currentUser.lastName || '';
+    document.getElementById('email').value = currentUser.email || '';
+    document.getElementById('phone').value = currentUser.phone || '';
+    document.getElementById('community').value = currentUser.community || '';
+});
+
+// Save profile changes
+function saveProfile() {
+    const firstName = document.getElementById('first-name').value;
+    const lastName = document.getElementById('last-name').value;
+    const email = document.getElementById('email').value;
+    const phone = document.getElementById('phone').value;
+    const community = document.getElementById('community').value;
+    
+    // Get current user from localStorage
+    let currentUser = JSON.parse(localStorage.getItem('currentUser'));
+    
+    // Update user info
+    currentUser.firstName = firstName;
+    currentUser.lastName = lastName;
+    currentUser.fullName = `${firstName} ${lastName}`.trim();
+    currentUser.email = email;
+    currentUser.phone = phone;
+    currentUser.community = community;
+    
+    // Update current user in localStorage
+    localStorage.setItem('currentUser', JSON.stringify(currentUser));
+    
+    // Update users array in localStorage
+    const users = JSON.parse(localStorage.getItem('users') || '[]');
+    const userIndex = users.findIndex(u => u.email === currentUser.email);
+    if (userIndex !== -1) {
+        users[userIndex] = currentUser;
+        localStorage.setItem('users', JSON.stringify(users));
+    }
+    
+    // Update profile information in sidebar
+    document.querySelector('.profile-name').textContent = currentUser.fullName;
+    document.querySelector('.profile-section p').textContent = currentUser.email;
+    
+    alert('Profile updated successfully!');
+}
+
+// Handle logout
+function logout() {
+    localStorage.removeItem('currentUser');
+    window.location.href = 'index.html';
+}
+
+// Tab switching functionality
+function showTab(tabName) {
+    // Hide all tabs
+    document.querySelectorAll('.tab-content').forEach(tab => {
+        tab.classList.remove('active');
+    });
+    
+    // Remove active class from all menu items
+    document.querySelectorAll('.menu-item').forEach(item => {
+        item.classList.remove('active');
+    });
+    
+    // Activate selected tab
+    document.getElementById(`${tabName}-tab`).classList.add('active');
+    
+    // Activate selected menu item
+    document.querySelector(`.menu-item:nth-child(${getTabIndex(tabName)})`).classList.add('active');
+}
+
+// Helper function to get tab index
+function getTabIndex(tabName) {
+    const tabs = ['profile', 'orders', 'addresses', 'payment', 'settings', 'logout'];
+    return tabs.indexOf(tabName) + 1;
+}
+    </script>
 </body>
 </html>
