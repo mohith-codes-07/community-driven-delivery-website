@@ -289,36 +289,65 @@ document.getElementById('login-form').addEventListener('submit', function(e) {
     const email = document.getElementById('login-email').value;
     const password = document.getElementById('login-password').value;
     
-    // In a real app, you would send these credentials to your server
-    console.log('Login attempt:', email, password);
+    // Store user data in localStorage (for demo purposes)
+    // In a real app, you would validate credentials against your server
+    // Here we're just checking if the user exists in localStorage
+    const users = JSON.parse(localStorage.getItem('users') || '[]');
+    const user = users.find(u => u.email === email);
     
-    // For demo, redirect to home page
-    alert('Login successful!');
-    window.location.href = 'home.html';  // Changed from index.html to home.html
+    if (user && user.password === password) {
+        // Store current user data in session
+        localStorage.setItem('currentUser', JSON.stringify(user));
+        alert('Login successful!');
+        window.location.href = 'home.html'; // Navigate to home.html instead of account.html
+    } else {
+        alert('Invalid email or password!');
+    }
 });
-        
-        // Handle signup form submission
-        document.getElementById('signup-form').addEventListener('submit', function(e) {
-            e.preventDefault();
-            const name = document.getElementById('signup-name').value;
-            const email = document.getElementById('signup-email').value;
-            const phone = document.getElementById('signup-phone').value;
-            const password = document.getElementById('signup-password').value;
-            const confirmPassword = document.getElementById('signup-confirm-password').value;
-            
-            // Validate password match
-            if (password !== confirmPassword) {
-                alert('Passwords do not match!');
-                return;
-            }
-            
-            // In a real app, you would send this information to your server
-            console.log('Signup attempt:', name, email, phone, password);
-            
-            // For demo, redirect to home page
-            alert('Signup successful!');
-            window.location.href = 'index.html';
-        });
+
+// Handle signup form submission
+document.getElementById('signup-form').addEventListener('submit', function(e) {
+    e.preventDefault();
+    const fullName = document.getElementById('signup-name').value;
+    const email = document.getElementById('signup-email').value;
+    const phone = document.getElementById('signup-phone').value;
+    const password = document.getElementById('signup-password').value;
+    const confirmPassword = document.getElementById('signup-confirm-password').value;
+    
+    // Validate password match
+    if (password !== confirmPassword) {
+        alert('Passwords do not match!');
+        return;
+    }
+    
+    // Split full name into first and last name
+    const nameParts = fullName.split(' ');
+    const firstName = nameParts[0];
+    const lastName = nameParts.slice(1).join(' ') || ''; // If no last name provided
+    
+    // Create user object
+    const user = {
+        firstName,
+        lastName,
+        fullName,
+        email,
+        phone,
+        password,
+        community: '' // Add empty community field that can be filled later
+    };
+    
+    // Store in localStorage (for demo purposes)
+    // In a real app, you would send this to your server
+    const users = JSON.parse(localStorage.getItem('users') || '[]');
+    users.push(user);
+    localStorage.setItem('users', JSON.stringify(users));
+    
+    // Store current user data in session
+    localStorage.setItem('currentUser', JSON.stringify(user));
+    
+    alert('Signup successful!');
+    window.location.href = 'home.html'; // Navigate to home.html instead of account.html
+});
     </script>
 </body>
 </html>
